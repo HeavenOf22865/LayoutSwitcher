@@ -1,5 +1,6 @@
 import configparser
 import os
+import sys
 import threading
 from pathlib import Path
 from time import sleep
@@ -15,6 +16,11 @@ CONFIG_DIR = Path(LOCAL_APPDATA_PATH) / "LayoutSwitcher"
 CONFIG_FILE = CONFIG_DIR / "config.ini"
 
 CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def get_resource_path(relative_path):
+    base_path = getattr(sys, "_MEIPASS", os.path.abspath("."))
+    return os.path.join(base_path, relative_path)
 
 
 def get_config():
@@ -79,7 +85,9 @@ def open_config_folder():
 
 
 def setup_tray():
-    img = Image.open("Assets/tray_icon.png")
+    icon_path = get_resource_path("Assets/tray_icon.png")
+
+    img = Image.open(icon_path)
 
     menu = pystray.Menu(
         pystray.MenuItem("Open Config Folder", open_config_folder),
