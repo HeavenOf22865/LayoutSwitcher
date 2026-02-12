@@ -1,18 +1,42 @@
+import configparser
+import os
+import threading
+from pathlib import Path
 from time import sleep
 
 import pyautogui
 import pyperclip
+import pystray
+from PIL import Image
 from pynput import keyboard
 
-DICTIONARY_RU = "йцукенгшщзхъфывапролджэячсмитьбю"
-DICTIONARY_ENG = "qwertyuiop[]asdfghjkl;'zxcvbnm,."
-HOTKEY = "<alt>+c"
+LOCAL_APPDATA_PATH = os.environ["LOCALAPPDATA"]
+CONFIG_DIR = Path(LOCAL_APPDATA_PATH) / "LayoutSwitcher"
+CONFIG_FILE = CONFIG_DIR / "config.ini"
 
-ru_to_eng = dict(zip(DICTIONARY_RU, DICTIONARY_ENG))
-eng_to_ru = dict(zip(DICTIONARY_ENG, DICTIONARY_RU))
+CONFIG_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def convert():
+def get_config():
+    config = configparser.ConfigParser()
+
+    if not CONFIG_FILE.exists():
+        config["General"] = {
+            "Dictionary 1": "qwertyuiop[]asdfghjkl;'zxcvbnm,.",
+            "Dictionary 2": "йцукенгшщзхъфывапролджэячсмитьбю",
+            "Hotkey": "<alt>+c",
+        }
+
+        with open(CONFIG_FILE, "w", encoding="utf-8") as f:
+            config.write(f)
+
+    else:
+        config.read(CONFIG_FILE, encoding="utf-8")
+
+    return config
+
+
+def convert(d1_to_d2, d2_to_d1):
     saved_text = pyperclip.paste()
 
     pyperclip.copy("")
@@ -28,10 +52,10 @@ def convert():
     for char in text:
         low_char = char.lower()
 
-        if low_char in ru_to_eng:
-            new_char = ru_to_eng[low_char]
-        elif low_char in eng_to_ru:
-            new_char = eng_to_ru[low_char]
+        if low_char in d1_to_d2:
+            new_char = d1_to_d2[low_char]
+        elif low_char in d2_to_d1:
+            new_char = d2_to_d1[low_char]
         else:
             new_char = char
 
@@ -44,8 +68,41 @@ def convert():
     pyperclip.copy(saved_text)
 
 
+def quit(icon, item):
+    icon.stop()
+
+    os._exit(0)
+
+
+def open_config_folder():
+    os.startfile(CONFIG_DIR)
+
+
+def setup_tray():
+    img = Image.open("Assets/tray_icon.png")
+
+    menu = pystray.Menu(
+        pystray.MenuItem("Open Config Folder", open_config_folder),
+        pystray.MenuItem("Exit", quit),
+    )
+    icon = pystray.Icon("layout_switcher", img, "LayoutSwitcher", menu)
+    icon.run()
+
+
 def main():
-    with keyboard.GlobalHotKeys({HOTKEY: convert}) as h:
+    cfg = get_config()
+
+    DICTIONARY_1 = str(cfg["General"].get("Dictionary 1"))
+    DICTIONARY_2 = str(cfg["General"].get("Dictionary 2"))
+    HOTKEY = str(cfg["General"].get("Hotkey"))
+
+    d1_to_d2 = dict(zip(DICTIONARY_1, DICTIONARY_2))
+    d2_to_d1 = dict(zip(DICTIONARY_2, DICTIONARY_1))
+
+    tray_thread = threading.Thread(target=setup_tray, daemon=True)
+    tray_thread.start()
+
+    with keyboard.GlobalHotKeys({HOTKEY: lambda: convert(d1_to_d2, d2_to_d1)}) as h:
         h.join()
 
 
