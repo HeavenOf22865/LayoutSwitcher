@@ -2,6 +2,8 @@
 
 LayoutSwitcher is a simple Python script that converts selected text to text in another language when you press a hotkey.
 
+So far only for windows.
+
 Used libraries:
 [Pynput](https://pypi.org/project/pynput/),
 [Pyperclip](https://pypi.org/project/pyperclip/),
