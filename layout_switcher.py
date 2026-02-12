@@ -2,6 +2,7 @@ import configparser
 import os
 import sys
 import threading
+import winreg
 from pathlib import Path
 from time import sleep
 
@@ -10,6 +11,10 @@ import pyperclip
 import pystray
 from PIL import Image
 from pynput import keyboard
+
+APP_NAME = "LayoutSwitcher"
+
+EXE_PATH = f'"{sys.executable}" "{os.path.realpath(__file__)}"'
 
 LOCAL_APPDATA_PATH = os.environ["LOCALAPPDATA"]
 CONFIG_DIR = Path(LOCAL_APPDATA_PATH) / "LayoutSwitcher"
@@ -87,6 +92,33 @@ def open_config_folder():
     os.startfile(CONFIG_DIR)
 
 
+def add_to_startup():
+    key = winreg.OpenKey(
+        winreg.HKEY_CURRENT_USER,
+        r"Software\Microsoft\Windows\CurrentVersion\Run",
+        0,
+        winreg.KEY_SET_VALUE,
+    )
+
+    with key:
+        winreg.SetValueEx(key, APP_NAME, 0, winreg.REG_SZ, EXE_PATH)
+
+
+def remove_from_startup():
+    try:
+        key = winreg.OpenKey(
+            winreg.HKEY_CURRENT_USER,
+            r"Software\Microsoft\Windows\CurrentVersion\Run",
+            0,
+            winreg.KEY_SET_VALUE,
+        )
+        with key:
+            winreg.DeleteValue(key, APP_NAME)
+
+    except FileNotFoundError:
+        pass
+
+
 def setup_tray():
     icon_path = get_resource_path("Assets/tray_icon.png")
 
@@ -94,6 +126,8 @@ def setup_tray():
 
     menu = pystray.Menu(
         pystray.MenuItem("Open Config Folder", open_config_folder),
+        pystray.MenuItem("Add To Startup", add_to_startup),
+        pystray.MenuItem("Remove From Startup", remove_from_startup),
         pystray.MenuItem("Exit", quit),
     )
     icon = pystray.Icon("layout_switcher", img, "LayoutSwitcher", menu)
