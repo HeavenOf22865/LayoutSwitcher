@@ -6,12 +6,15 @@ from pynput import keyboard
 
 DICTIONARY_RU = "йцукенгшщзхъфывапролджэячсмитьбю"
 DICTIONARY_ENG = "qwertyuiop[]asdfghjkl;'zxcvbnm,."
+HOTKEY = "<alt>+c"
 
 ru_to_eng = dict(zip(DICTIONARY_RU, DICTIONARY_ENG))
 eng_to_ru = dict(zip(DICTIONARY_ENG, DICTIONARY_RU))
 
 
 def convert():
+    saved_text = pyperclip.paste()
+
     pyperclip.copy("")
 
     sleep(0.1)
@@ -38,9 +41,11 @@ def convert():
 
     pyautogui.hotkey("ctrl", "v")
 
+    pyperclip.copy(saved_text)
+
 
 def main():
-    with keyboard.GlobalHotKeys({"<alt>+c": convert}) as h:
+    with keyboard.GlobalHotKeys({HOTKEY: convert}) as h:
         h.join()
 
 
