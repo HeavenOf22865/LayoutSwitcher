@@ -43,11 +43,14 @@ def get_config():
 
 
 def convert(d1_to_d2, d2_to_d1):
+    pyautogui.keyUp("alt")
+    pyautogui.keyUp("x")
+
+    sleep(0.1)
+
     saved_text = pyperclip.paste()
 
     pyperclip.copy("")
-
-    sleep(0.1)
 
     pyautogui.hotkey("ctrl", "c")
 
