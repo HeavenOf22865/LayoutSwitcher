@@ -150,4 +150,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        with open(CONFIG_DIR / "error.log", "a") as f:
+            f.write(f"Error: {str(e)}\n")
