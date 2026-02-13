@@ -1,6 +1,6 @@
 !!! I'm not a native speaker, so there may be grammatical errors.
 
-!!! The script has a lot of problems (аor example, the script does not work at startup), if you are interested, you can fix it.
+!!! The script has a lot of problems (for example, the script does not work at startup), if you are interested, you can fix it.
 
 LayoutSwitcher is a simple Python script that maps characters from the selected text to characters from another language layout and replaces them.
 
