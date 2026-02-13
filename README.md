@@ -1,6 +1,10 @@
 !!! I'm not a native speaker, so there may be grammatical errors.
 
-LayoutSwitcher is a simple Python script that converts selected text to text in another language when you press a hotkey.
+!!! The script has a lot of problems (for example, the script does not work at startup), if you are interested, you can fix it.
+
+LayoutSwitcher is a simple Python script that maps characters from the selected text to characters from another language layout and replaces them.
+
+(учфзду<->example)
 
 So far only for windows.
 
