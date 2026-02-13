@@ -14,7 +14,7 @@ from pynput import keyboard
 
 APP_NAME = "LayoutSwitcher"
 
-EXE_PATH = f'"{sys.executable}" "{os.path.realpath(__file__)}"'
+EXE_PATH = f'"{sys.executable}"'
 
 LOCAL_APPDATA_PATH = os.environ["LOCALAPPDATA"]
 CONFIG_DIR = Path(LOCAL_APPDATA_PATH) / "LayoutSwitcher"
