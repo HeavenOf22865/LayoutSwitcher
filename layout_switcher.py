@@ -14,7 +14,7 @@ from pynput import keyboard
 
 APP_NAME = "LayoutSwitcher"
 
-EXE_PATH = f'"{sys.executable}"'
+EXE_PATH = f'"{sys.executable}" "{os.path.abspath(sys.argv[0])}"'
 
 LOCAL_APPDATA_PATH = os.environ["LOCALAPPDATA"]
 CONFIG_DIR = Path(LOCAL_APPDATA_PATH) / "LayoutSwitcher"
@@ -48,8 +48,6 @@ def get_config():
 
 
 def convert(d1_to_d2, d2_to_d1):
-    pyautogui.keyUp("alt")
-    pyautogui.keyUp("x")
 
     sleep(0.1)
 
